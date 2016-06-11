@@ -1,3 +1,4 @@
+MIP Notes:
 
 MPI applications - compilation:
     mpicc test.c -o test
