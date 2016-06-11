@@ -15,12 +15,12 @@ using namespace std;
 
 // global variables - vanessa's direct file paths
 
-//string connectome_file = "connectome.csv";
-//string synaptic_file = "postsynaptic.csv";
+string connectome_file = "connectome.csv";
+string synaptic_file = "postsynaptic.csv";
 
 // mac file strings
-string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
-string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
+//string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
+//string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
 
 // windows - pc
 //string connectome_file = "K:\\School\\Summer 2016\\connectome\\connectome.csv";
