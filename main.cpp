@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include "synapse.h"
+#include "mpi.h"
 
 /*
  * when (neuron A, neuron B, weight)
