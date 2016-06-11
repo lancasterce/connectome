@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include "synapse.h"
+#include "mpi.h"
 
 /*
  * when (neuron A, neuron B, weight)
@@ -71,6 +72,24 @@ int main(int argc, char **argv) {
     cout << "----------\n" << endl;
 
     runconnectome(connectome_vector,postsynaptic_vector,connectome_vector[x]);
+
+    /*  MPI START   */
+    cout << "\nMPI START: " << endl;
+
+    int world_rank,world_size,name_len;
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+
+    MPI_Init(NULL,NULL);
+
+    MPI_Get_processor_name(processor_name,&name_len);
+
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    cout << "processor: " << processor_name <<"I am " << world_rank << " of " << world_size << endl;
+
+    MPI_Finalize();
+
+    /*  MPI END    */
 
     return 0;
 
