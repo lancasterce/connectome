@@ -252,8 +252,8 @@ void dendriteAccumulate(vector<synapse> &x, vector<synapse> &y, synapse a)  {
 
                     //  POSTSYNAPTIC VECTOR is altered here.
                     postsyn.set_weight(allneurons.get_weight());
-                    cout << "postsynaptic vector altered at: ";
-                    cout << postsyn.get_neuronA() << ", " << postsyn.get_weight() << endl;
+                    //cout << "postsynaptic vector altered at: ";
+                    //cout << postsyn.get_neuronA() << ", " << postsyn.get_weight() << endl;
 
                 }// end if
 
