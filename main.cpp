@@ -18,14 +18,6 @@ using namespace std;
 string connectome_file = "connectome.csv";
 string synaptic_file = "postsynaptic.csv";
 
-// mac file strings
-//string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
-//string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
-
-// windows - pc
-//string connectome_file = "K:\\School\\Summer 2016\\connectome\\connectome.csv";
-//string synaptic_file = "K:\\School\\Summer 2016\\connectome\\postsynaptic.csv";
-
 /*
  * threshold value
  * maximum accumulated value that must be exceeded before the neurite will fire
@@ -85,7 +77,7 @@ int main(int argc, char **argv) {
 
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    cout << "processor: " << processor_name <<"I am " << world_rank << " of " << world_size << endl;
+    cout << "processor " << processor_name <<" : I am " << world_rank << " of " << world_size << endl;
 
     MPI_Finalize();
 
