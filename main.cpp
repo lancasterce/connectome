@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include "synapse.h"
-#include "mpi.h"
+//#include "mpi.h"  # I get an error?
 
 /*
  * when (neuron A, neuron B, weight)
