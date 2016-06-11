@@ -15,8 +15,11 @@ using namespace std;
 
 // global variables - vanessa's direct file paths
 
-string connectome_file = "connectome.csv";
-string synaptic_file = "postsynaptic.csv";
+//string connectome_file = "connectome.csv";
+//string synaptic_file = "postsynaptic.csv";
+
+string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
+string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/synapse.cpp";
 
 /*
  * threshold value
@@ -57,15 +60,26 @@ int main(int argc, char **argv) {
     //  the user input was substituted with the first neurite in the
     //  connectome_vector
 
-    int x = 825;
+    string neuron;
 
-    cout << "\n----------" << endl;
-    cout << "Running Connectome with : x " << x << " , neuron: " << connectome_vector[x].get_neuronA() << endl;
-    cout << "----------\n" << endl;
+    cout << "Please enter Neuron: ";
+    cin >> neuron;
 
-    runconnectome(connectome_vector,postsynaptic_vector,connectome_vector[x]);
+    for(int i = 0; i < connectome_vector.size() ; i++) {
+
+        if (connectome_vector[i].get_neuronA() == neuron) {
+
+            cout << "\n----------" << endl;
+            cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() << endl;
+            cout << "----------\n" << endl;
+
+            runconnectome(connectome_vector, postsynaptic_vector, connectome_vector[i]);
+        }
+
+    }
 
     /*  MPI START   */
+    /*
     cout << "\nMPI START: " << endl;
 
     int world_rank,world_size,name_len;
@@ -80,7 +94,7 @@ int main(int argc, char **argv) {
     cout << "processor " << processor_name <<" : I am " << world_rank << " of " << world_size << endl;
 
     MPI_Finalize();
-
+    */
     /*  MPI END    */
 
     return 0;
@@ -252,8 +266,8 @@ void dendriteAccumulate(vector<synapse> &x, vector<synapse> &y, synapse a)  {
 
                     //  POSTSYNAPTIC VECTOR is altered here.
                     postsyn.set_weight(allneurons.get_weight());
-                    //cout << "postsynaptic vector altered at: ";
-                    //cout << postsyn.get_neuronA() << ", " << postsyn.get_weight() << endl;
+                    cout << "postsynaptic vector altered at: ";
+                    cout << postsyn.get_neuronA() << ", " << postsyn.get_weight() << endl;
 
                 }// end if
 
