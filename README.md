@@ -23,6 +23,7 @@ If there are many notes, create a host file:
     mpiexec - hostfile hf -np 16 ./test
 
 for our project!
+
     g++ -c synapse.cpp
     g++ -c main.cpp
     mpicxx synapse.o main.o -o main
