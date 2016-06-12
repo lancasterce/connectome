@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cctype>
 #include "synapse.h"
 #include "mpi.h"
 
@@ -69,7 +70,7 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < connectome_vector.size() ; i++) {
 
-        if (connectome_vector[i].get_neuronA() == neuron) {
+        if (connectome_vector[i].get_neuronA() == toupper(neuron)) {
 
             cout << "----------" << endl;
             cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() << endl;
