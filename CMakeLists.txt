@@ -22,5 +22,5 @@ if(MPI_COMPILE_FLAGS)
 endif()
 
 if(MPI_LINK_FLAGS)
-    set_target_properties()
-endif(connectome PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}")
+    set_target_properties(connectome PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}")
+endif()
