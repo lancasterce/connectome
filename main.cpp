@@ -61,9 +61,11 @@ int main(int argc, char **argv) {
     //  connectome_vector
 
     string neuron;
+    int i = 65;
 
     cout << "Please enter Neuron: ";
-    cin >> neuron;
+    //cin >> neuron;
+    neuron = connectome_vector[0].get_neuronA();
 
     for(int i = 0; i < connectome_vector.size() ; i++) {
 
@@ -261,6 +263,8 @@ void dendriteAccumulate(vector<synapse> &x, vector<synapse> &y, synapse a)  {
         if(allneurons.get_neuronA() == a.get_neuronA())    {
 
             for (synapse postsyn : y)   {
+
+                // add comment here?
 
                 if(postsyn.get_neuronA() == allneurons.get_neuronB())   {
 
