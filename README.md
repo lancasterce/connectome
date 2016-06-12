@@ -22,10 +22,12 @@ If there are many notes, create a host file:
 
     mpiexec - hostfile hf -np 16 ./test
 
-// for our project!
-g++ -c synapse.cpp
-g++ -c main.cpp
-mpicxx synapse.o main.o -o main
-mpiexec ./main
+for our project!
+    g++ -c synapse.cpp
+    g++ -c main.cpp
+    mpicxx synapse.o main.o -o main
+    mpiexec ./main
 
 mpiexec -np 6 --hosts node,node1,node2,node3,node4,node5 ./main
+mpiexec -np 6 -hostsfile nodehosts ./main
+
