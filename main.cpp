@@ -19,7 +19,7 @@ using namespace std;
 //string synaptic_file = "postsynaptic.csv";
 
 string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
-string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/synapse.cpp";
+string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
 
 /*
  * threshold value
@@ -61,11 +61,11 @@ int main(int argc, char **argv) {
     //  connectome_vector
 
     string neuron;
-    int i = 65;
+    //int i = 2000;
 
-    cout << "Please enter Neuron: ";
-    //cin >> neuron;
-    neuron = connectome_vector[0].get_neuronA();
+    cout << "\nPlease enter Neuron: ";
+    cin >> neuron;
+    //  neuron = connectome_vector[100].get_neuronA();
 
     for(int i = 0; i < connectome_vector.size() ; i++) {
 
@@ -258,20 +258,30 @@ void read_postsynaptic(vector<synapse> & x)    {
  */
 void dendriteAccumulate(vector<synapse> &x, vector<synapse> &y, synapse a)  {
 
-    for(synapse allneurons : x) {
+    //for(synapse allneurons : x) {
+    int allneurons,postsyn;
 
-        if(allneurons.get_neuronA() == a.get_neuronA())    {
+    for(allneurons = 0 ; allneurons < x.size() ; allneurons++) {
 
-            for (synapse postsyn : y)   {
+        if(x[allneurons].get_neuronA() == a.get_neuronA())    {
 
-                // add comment here?
+            //cout << "allneurons: " << allneurons.get_neuronA() << endl;
+            //cout << "a          :" << a.get_neuronA() << endl;
+            //cout << "allneurons.get_neuronA() == a.get_neuronA() : " << (allneurons.get_neuronA() == a.get_neuronA()) << "\n\n";
 
-                if(postsyn.get_neuronA() == allneurons.get_neuronB())   {
+            //for (synapse postsyn : y)   {
+            for(postsyn = 0; postsyn < y.size() ; postsyn++)    {
+
+                if(y[postsyn].get_neuronA() == x[allneurons].get_neuronB())   {
+
+                    //cout << "\tpostsyn: " << postsyn.get_neuronA() << endl;
+                    //cout << "\tallneurons: " << allneurons.get_neuronA() << endl;
+                    //cout << "postsyn.get_neuronA() == allneurons.get_neuronB() : " << (postsyn.get_neuronA() == allneurons.get_neuronB()) << "\n\n";
 
                     //  POSTSYNAPTIC VECTOR is altered here.
-                    postsyn.set_weight(allneurons.get_weight());
-                    cout << "postsynaptic vector altered at: ";
-                    cout << postsyn.get_neuronA() << ", " << postsyn.get_weight() << endl;
+                    y[postsyn].set_weight(x[allneurons].get_weight());
+                    //cout << "postsynaptic vector altered at: ";
+                    //cout << y[postsyn].get_neuronA() << ", " << y[postsyn].get_weight() << endl;
 
                 }// end if
 
@@ -292,28 +302,34 @@ void dendriteAccumulate(vector<synapse> &x, vector<synapse> &y, synapse a)  {
  */
 void fireNeuron(vector<synapse> &x, vector<synapse> &y,synapse a)   {
 
-    dendriteAccumulate(x,y,a);
+    int postsynaccum;
+     dendriteAccumulate(x,y,a);
 
-    for(synapse postsynaccum: y)    {
+    //for(synapse postsynaccum: y)    {
+    for(postsynaccum = 0 ; postsynaccum < y.size() ; postsynaccum++ )   {
 
-        if((postsynaccum.get_weight() > threshold))    {
+        //cout << "postsynaccum: " << y[postsynaccum].get_neuronA() << endl;
+
+        if(y[postsynaccum].get_weight() > threshold)  {
 
             //  this is the output and where you put in ###
             //  connections to other applications
             //  note after firing, the accumulator is set to 0 -- important
 
-            if(postsynaccum.get_neuronA().substr(0,2) == "MV" || postsynaccum.get_neuronA().substr(0,2) == "MD") {
+           //cout << "postsynaccum : " << y[postsynaccum].get_neuronA().substr(0,2) << endl;
 
-                string msg = postsynaccum.get_neuronA() + " " + to_string(postsynaccum.get_weight());
-                cout << "msg: " << msg << endl;
-                cout << "Fire Muscle " + postsynaccum.get_neuronA() + to_string(postsynaccum.get_weight());
-                postsynaccum.set_weight(0);
+            if(y[postsynaccum].get_neuronA().substr(0,2) == "MV" || y[postsynaccum].get_neuronA().substr(0,2) == "MD") {
+
+                string msg = y[postsynaccum].get_neuronA() + " " + to_string(y[postsynaccum].get_weight());
+                //cout << "msg: " << msg << endl;
+                cout << "\nFire Muscle " + y[postsynaccum].get_neuronA() + to_string(y[postsynaccum].get_weight());
+                y[postsynaccum].set_weight(0);
 
             } else {
 
-                cout << "Fire Neuron " + postsynaccum.get_neuronA() << endl;
-                dendriteAccumulate(x,y,postsynaccum);
-                postsynaccum.set_weight(0);
+                cout << "\nFire Neuron " + y[postsynaccum].get_neuronA() << endl;
+                dendriteAccumulate(x,y,y[postsynaccum]);
+                y[postsynaccum].set_weight(0);
 
             }// end if/else
 
@@ -330,14 +346,20 @@ void fireNeuron(vector<synapse> &x, vector<synapse> &y,synapse a)   {
  */
 void runconnectome(vector<synapse> &x, vector<synapse> &y, synapse a)   {
 
-    dendriteAccumulate(x,y,a);
+    int postsynaccum;
+     dendriteAccumulate(x,y,a);
 
-    for( synapse postsynaccum : y)  {
+    //for( synapse postsynaccum : y)  {
+    for(postsynaccum = 0 ; postsynaccum < y.size() ; postsynaccum++)    {
 
-        if(abs(postsynaccum.get_weight()) > threshold)  {
+        //cout << "postsynaccum: " << y[postsynaccum].get_neuronA()  << " , " << y[postsynaccum].get_weight() << endl;
 
-            fireNeuron(x,y,postsynaccum);
-            postsynaccum.set_weight(0);
+        if(y[postsynaccum].get_weight() > threshold)  {
+
+            //cout << "postsynaccum: " << postsynaccum.get_neuronA()  << " , " << postsynaccum.get_weight() << endl;
+
+            fireNeuron(x,y,y[postsynaccum]);
+            y[postsynaccum].set_weight(0);
 
         }// end if
 
