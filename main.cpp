@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <cctype>
 #include "synapse.h"
 #include "mpi.h"
 
@@ -38,7 +37,7 @@ void testFiles(vector<synapse> &, vector<synapse> &);
 
 ///
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
 
     /*
         connectome_vector:
@@ -70,7 +69,7 @@ int main(int argc, char **argv) {
 
     for(int i = 0; i < connectome_vector.size() ; i++) {
 
-        if (connectome_vector[i].get_neuronA() == toupper(neuron)) {
+        if (connectome_vector[i].get_neuronA() == neuron) {
 
             cout << "----------" << endl;
             cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() << endl;
@@ -83,20 +82,31 @@ int main(int argc, char **argv) {
 
     /*  MPI START   */
 
-    cout << "\nMPI START: " << endl;
+    cout << "\n----------" << endl;
+    cout << "MPI START: " << endl;
+    cout << "----------" << endl;
+    cout << endl;
 
     int world_rank,world_size,name_len;
     char processor_name[MPI_MAX_PROCESSOR_NAME];
 
-    MPI_Init(NULL,NULL);
+    MPI::Init(argc,argv);
 
+    // find c++ implementation
     MPI_Get_processor_name(processor_name,&name_len);
 
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
     cout << "processor " << processor_name <<" : I am " << world_rank << " of " << world_size << endl;
 
     MPI_Finalize();
+
+    cout << endl;
+    cout << "----------" << endl;
+    cout << "MPI END: " << endl;
+    cout << "----------" << endl;
 
     /*  MPI END    */
 

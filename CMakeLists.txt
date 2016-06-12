@@ -8,7 +8,7 @@ set(SOURCE_FILES
     main.cpp
     postsynaptic.csv
     synapse.cpp
-    synapse.h)
+    synapse.h ring.cpp)
 
 add_executable(connectome ${SOURCE_FILES})
 
