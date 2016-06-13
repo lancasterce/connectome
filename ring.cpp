@@ -1,7 +1,7 @@
 //
 // Created by Vanessa Ulloa on 6/12/16.
 //
-
+/*
 #include <iostream>
 #include "mpi.h"
 
@@ -9,8 +9,6 @@ using namespace std;
 
 
 int main(int argc, char** argv) {
-
-    /* MPI START    */
 
     MPI_Init(&argc,&argv);
 
@@ -48,7 +46,6 @@ int main(int argc, char** argv) {
 
     MPI_Finalize();
 
-    /*  MPI END */
-
     return 0;
 }
+*/

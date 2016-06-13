@@ -15,11 +15,11 @@ using namespace std;
 
 // global variables - vanessa's direct file paths
 
-string connectome_file = "connectome.csv";
-string synaptic_file = "postsynaptic.csv";
+//string connectome_file = "connectome.csv";
+//string synaptic_file = "postsynaptic.csv";
 
-//string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
-//string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
+string connectome_file = "/Users/vanessaulloa/ClionProjects/connectome/connectome.csv";
+string synaptic_file = "/Users/vanessaulloa/ClionProjects/connectome/postsynaptic.csv";
 
 /*
  * threshold value
@@ -45,68 +45,135 @@ int main(int argc, char *argv[]) {
         postsynaptic_vector: 
             maintains accumulated values for each neuron and muscle.
     */
+
+    /*  MPI START   */
+
+    /*
+     * Node (master branch):
+     *      1. read the csv files
+     *      2. initiate MPI
+     *      3. processor rank, comm rank, comm size
+     *
+     * Node 1: 0 to 800
+     * Node 2: 801 to 1600
+     * Node 3: 1601 to 2400
+     * Node 4: 2401 to 3200
+     * Node 5: 3201 to 3954 (connectome_vector size)
+     *
+     */
+
+    //  NODE [MASTER]
+
+    int world_rank, world_size, name_len, chunk_size, tag1, tag2, source, dest, offset;
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    string neuron;
+    MPI_Status status;
+
+    //  initiate MPI
+    MPI::Init(argc, argv);
+
+    //  checking
+    cout << "\nprocessor " << processor_name <<" : I am " << world_rank << " of " << world_size << "\n\n";
+
     vector<synapse> postsynaptic_vector;
     vector<synapse> connectome_vector;
 
-    //  function that reads the connectome.csv file and values
+    //  function that reads the connectome.csv and postsynaptic.csv file and values
     //  uses overloaded synapse constructor for 2 neurons and 1 int value
-    read_connectome(connectome_vector);
-
-    //  function that reads the postsynaptic.csv file and values
     //  uses overloaded synapse constructor for 1 neuron and 1 int value
+    read_connectome(connectome_vector);
     read_postsynaptic(postsynaptic_vector);
 
-    //  runs the connectome, user input in the python code
-    //  the user input was substituted with the first neurite in the
-    //  connectome_vector
+    //  get values for name_len, world_rank, world_size
+    MPI_Get_processor_name(processor_name, &name_len);
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    tag2 = 1;
+    tag1 = 2;
 
-    string neuron;
-    //int i = 0;
-
+    //  user input for neuron
     cout << "\nPlease enter Neuron: ";
     cin >> neuron;
-    //neuron = connectome_vector[3954].get_neuronA();
 
-    for(int i = 0; i < connectome_vector.size() ; i++) {
+    //  set chunk size
+    chunk_size = connectome_vector.size() / (world_size - 1);
+
+    //  Send each node its portion of connectome_vector
+    offset = chunk_size;
+
+    for(int i = 1; i < world_size ; i++) {
+
+        MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+        MPI_Send(&connectome_vector[offset], chunk_size, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+
+        cout << "Sent " << chunk_size << " elements to task " << dest << " offset = " << offset << endl;
+        offset += chunk_size;
+
+    }
+
+    //  node does its part of the work
+    offset = 0;
+
+    for (int i = 0; i < (offset + chunk_size); i++) {
 
         if (connectome_vector[i].get_neuronA() == neuron) {
 
             cout << "----------" << endl;
-            cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() << endl;
+            cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() <<
+            " on " << processor_name << endl;
             cout << "----------" << endl;
 
+            //  receive from node
+            //  MPI_Recv
+
             runconnectome(connectome_vector, postsynaptic_vector, connectome_vector[i]);
+
         }
+    }
+
+    //  receive from other nodes
+    for(int i = 1; i < world_size; i++) {
+
+        source = i;
+        MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&connectome_vector[offset], chunk_size, MPI_FLOAT, source, tag2, MPI_COMM_WORLD, &status);
 
     }
 
-    /*  MPI START   */
+    //  pass through Node 1 to Node 5
+    //  world_rank or node = 0
+    if (world_rank > 0) {
 
-    cout << "\n----------" << endl;
-    cout << "MPI START: " << endl;
-    cout << "----------" << endl;
-    cout << endl;
+        //  receive instructions from node (master)
+        source = 0;
+        MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&connectome_vector[offset], chunk_size, MPI_FLOAT, source, tag2, MPI_COMM_WORLD, &status);
 
-    int world_rank,world_size,name_len;
-    char processor_name[MPI_MAX_PROCESSOR_NAME];
+        for (int i = 0; i < (offset + chunk_size); i++) {
 
-    MPI::Init(argc,argv);
+            if (connectome_vector[i].get_neuronA() == neuron) {
 
-    // find c++ implementation
-    MPI_Get_processor_name(processor_name,&name_len);
+                cout << "----------" << endl;
+                cout << "Running Connectome with : x " << i << " , neuron: " << connectome_vector[i].get_neuronA() <<
+                " on " << processor_name << endl;
+                cout << "----------" << endl;
 
-    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+                //  receive from node
+                //  MPI_Recv
 
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+                runconnectome(connectome_vector, postsynaptic_vector, connectome_vector[i]);
 
-    cout << "processor " << processor_name <<" : I am " << world_rank << " of " << world_size << endl;
+                // send back to master
+                dest = 0;
+                MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+                MPI_Send(&connectome_vector[offset], chunk_size, MPI_FLOAT, 0, tag2, MPI_COMM_WORLD);
+
+            }
+
+        }
+    }
 
     MPI_Finalize();
-
-    cout << endl;
-    cout << "----------" << endl;
-    cout << "MPI END: " << endl;
-    cout << "----------" << endl;
 
     /*  MPI END    */
 
@@ -327,20 +394,18 @@ void fireNeuron(vector<synapse> &x, vector<synapse> &y,synapse a)   {
             //  connections to other applications
             //  note after firing, the accumulator is set to 0 -- important
 
-           //cout << "postsynaccum : " << y[postsynaccum].get_neuronA().substr(0,2) << endl;
+            //cout << "postsynaccum : " << y[postsynaccum].get_neuronA().substr(0,2) << endl;
 
             if(y[postsynaccum].get_neuronA().substr(0,2) == "MV" || y[postsynaccum].get_neuronA().substr(0,2) == "MD") {
 
-                //string msg = y[postsynaccum].get_neuronA() + " " + to_string(y[postsynaccum].get_weight());
-                //cout << "msg: " << msg << endl;
-                cout << "Fire Muscle " + y[postsynaccum].get_neuronA() << endl;
+                cout << "Fire Muscle " + y[postsynaccum].get_neuronA() << y[postsynaccum].get_weight() << endl;
                 y[postsynaccum].set_weight(0);
 
             } else {
 
                 cout << "Fire Neuron " + y[postsynaccum].get_neuronA() << endl;
                 dendriteAccumulate(x,y,y[postsynaccum]);
-                y[postsynaccum].set_weight(0);
+                //y[postsynaccum].set_weight(0); Redundent, not needed.
 
             }// end if/else
 
@@ -358,6 +423,7 @@ void fireNeuron(vector<synapse> &x, vector<synapse> &y,synapse a)   {
 void runconnectome(vector<synapse> &x, vector<synapse> &y, synapse a)   {
 
     int postsynaccum;
+
     dendriteAccumulate(x,y,a);
 
     //for( synapse postsynaccum : y)  {
