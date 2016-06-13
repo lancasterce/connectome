@@ -29,6 +29,7 @@ for our project!
     mpicxx synapse.o main.o -o main
     mpiexec ./main
 
-mpiexec -np 6 --hosts node,node1,node2,node3,node4,node5 ./main
-mpiexec -np 6 -hostsfile nodehosts ./main
+to execute:
+    mpiexec -np 6 --hosts node,node1,node2,node3,node4,node5 ./main
+    mpiexec -np 6 -hostsfile nodehosts ./main
 
